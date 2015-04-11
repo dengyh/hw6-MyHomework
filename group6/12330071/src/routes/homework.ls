@@ -7,6 +7,7 @@ format-time = (time) -> time.getFullYear! + '-' + (1 + time.getMonth!) + '-' + t
   ' ' + time.getHours! + ':' + time.getMinutes! + ':' + time.getSeconds!
 
 module.exports = ->
+  # The index page for this homework system
   router.get '/', is-authenticated, (req, res) !->
     (error, homeworks) <- Homework.find {}
     for item in homeworks
@@ -15,6 +16,8 @@ module.exports = ->
       user: req.user
       homeworks: homeworks
 
+
+  # The page for teacher to create a new homework
   router.get '/homework/create', is-authenticated, (req, res) !->
     if req.user.role != 'teacher' then res.render 'error',
       message: 'Forbbiden'
@@ -22,6 +25,8 @@ module.exports = ->
     res.render 'create',
       user: req.user
 
+
+  # The page for teacher to update a old homework
   router.get '/homework/update/:id', is-authenticated, (req, res) ->
     if req.user.role != 'teacher' then res.render 'error',
       message: 'Forbbiden'
@@ -35,6 +40,8 @@ module.exports = ->
       user: req.user
       homework: homework
 
+
+  # The interface for teacher to update a homework
   router.post '/homework/update/:id', is-authenticated, (req, res) ->
     if req.user.role != 'teacher' then res.render 'error',
       message: 'Forbbiden'
@@ -60,6 +67,9 @@ module.exports = ->
 
     res.redirect '/homework/' + req.params.id
 
+
+
+  # The page for teacher and student to see a homework's detail
   router.get '/homework/:id', is-authenticated, (req, res) !->
     (error, homework) <- Homework.findById req.params.id
     if error then res.render 'error',
@@ -75,12 +85,17 @@ module.exports = ->
         time = item.time
         subTime = format-time time
 
+    outline = if homework.deadline > new Date! then false else true
+
     res.render 'homework',
       homework: homework
       subTime: subTime
       submission: submission
+      outline: outline
       user: req.user
 
+
+  # The interface for teacher to create a new homework
   router.post '/homework', is-authenticated, (req, res) !->
     if req.user.role != 'teacher' then res.render 'error',
       message: 'Forbbiden'
@@ -99,6 +114,8 @@ module.exports = ->
         status: 500
       res.redirect '/'
 
+
+  # The interface for student to submit a submission of a homework
   router.post '/homework/submit/:id', is-authenticated, (req, res) !->
     (error, homework) <- Homework.findById req.params.id
     if error then res.render 'error',
@@ -133,4 +150,25 @@ module.exports = ->
 
     res.redirect '/homework/' + req.params.id
 
-    
+
+  # The interface for teacher to set the grade of the given student
+  router.post '/homework/grade/:id', is-authenticated, (req, res) !->
+    (error, homework) <- Homework.findById req.params.id
+    if error then res.render 'error',
+      message: 'Not Found Homework'
+      status: 404
+    if req.user.role != 'teacher' then res.render 'error',
+      message: 'Forbbiden'
+      status: 403
+    studentId = req.body.studentId
+    grade = req.body.grade
+
+    for item in homework.submissions
+      if item.studentId == studentId
+        item.grade = parseInt(grade)
+
+    homework.save (error) ->
+      if error then res.render 'error',
+        message: 'Error in create homework'
+        status: 500
+      res.json result: true

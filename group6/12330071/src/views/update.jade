@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  div(class="panel panel-primary")
+    div.panel-heading 修改作业
+    div.panel-body
+      form(method="post", action="/homework/update/#{homework._id}")
+        div.form-group
+          label(for="homework-title") 作业标题
+          input(type="text", class="form-control", name="title", id="homework-title", placeholder="Enter title", value="#{homework.title}")
+        div.form-group
+          label(for="homework-content") 作业要求
+          textarea(class="form-control", id="homework-content", name="content")
+            | #{homework.content}
+        div.form-group
+          label(for="homework-deadline") 截至时间
+          div.row
+            div.col-md-2
+              input(type="text", class="form-control", name="year", id="homework-deadline", placeholder="Year", value="#{homework.deadline.getFullYear()}")
+            div.col-md-2
+              input(type="text", class="form-control", name="month", id="homework-deadline", placeholder="Month", value="#{homework.deadline.getMonth() + 1}")
+            div.col-md-2
+              input(type="text", class="form-control", name="day", id="homework-deadline", placeholder="Day", value="#{homework.deadline.getDate()}")
+            div.col-md-2
+              input(type="text", class="form-control", name="hour", id="homework-deadline", placeholder="Hour", value="#{homework.deadline.getHours()}")
+        div.form-group
+          button(class="btn btn-primary") 修改
