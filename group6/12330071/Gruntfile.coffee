@@ -33,6 +33,10 @@ module.exports = (grunt) ->
         files:
           src: [
             "bin/*"
+            "bin/public/*"
+            "!bin/public"
+            "!bin/public/uploads"
+            "!bin/public/uploads/**"
             ".temp"
           ]
 

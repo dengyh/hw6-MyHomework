@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  div(class="panel panel-primary")
+    div.panel-heading #{homework.title}
+    div.panel-body
+      h6 作业要求
+      p #{homework.content}
+      h6 作业布置时间
+      p #{homework.time}
+      h6 作业截止时间
+      p #{homework.deadline}
+      if user && user.role == 'teacher'
+        a(class="btn btn-primary" href="/homework/update/#{homework._id}") 修改作业要求
+      hr
+      if user && user.role == 'student'
+        h6 作业提交
+        if submission
+          p 上次提交 #{submission.name} (#{subTime})
+        form(method="post", action="/homework/submit/#{homework._id}", enctype="multipart/form-data")
+          div.form-group
+            label(for="homework-submission")
+            input(type="file", name="submission", id="homework-submission")
+          div.form-group
+            button(class="btn btn-primary") 提交
+      else
+        h6 作业批改
