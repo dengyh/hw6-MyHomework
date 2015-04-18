@@ -100,3 +100,11 @@ ul.user-details{
 .panel .panel-heading {
   background-color: rgb(52,73,94);
 }
+
+h6 {
+    font-weight: bolder;
+}
+
+p {
+    text-indent: 20px;
+}

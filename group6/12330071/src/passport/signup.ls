@@ -11,18 +11,23 @@ module.exports = (passport)!-> passport.use 'signup',  new LocalStrategy pass-re
     console.log msg = "User: #{username} already exists"
     done null, false, req.flash 'message', msg
   else
-    new-user = new User {
-      username  : username
-      password  : hash password
-      email     : req.param 'email'
-      firstName : req.param 'firstName'
-      lastName  : req.param 'lastName'
-      role      : req.param 'role'
-    } 
-    new-user.save (error)->
-      if error
-        console.log "Error in saving user: ", error
-        throw error
-      else
-        console.log "User registration success"
-        done null, new-user 
+    (error, teacher) <- User.find-one {role: 'teacher'}
+    return (console.log "Error in signup: ", error ; done error) if error
+    if teacher
+      done null, false, req.flash 'message', 'Only one teacher can be create'
+    else
+      new-user = new User {
+        username  : username
+        password  : hash password
+        email     : req.param 'email'
+        firstName : req.param 'firstName'
+        lastName  : req.param 'lastName'
+        role      : req.param 'role'
+      } 
+      new-user.save (error)->
+        if error
+          console.log "Error in saving user: ", error
+          throw error
+        else
+          console.log "User registration success"
+          done null, new-user 
