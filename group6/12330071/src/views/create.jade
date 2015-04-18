@@ -14,13 +14,9 @@ block content
         div.form-group
           label(for="homework-deadline") 截至时间
           div.row
-            div.col-md-2
-              input(type="text", class="form-control", name="year", id="homework-deadline", placeholder="Year")
-            div.col-md-2
-              input(type="text", class="form-control", name="month", id="homework-deadline", placeholder="Month")
-            div.col-md-2
-              input(type="text", class="form-control", name="day", id="homework-deadline", placeholder="Day")
-            div.col-md-2
-              input(type="text", class="form-control", name="hour", id="homework-deadline", placeholder="Hour")
+            div.col-md-4
+              input(type="date", class="form-control", name="date", id="homework-deadline", placeholder="YYYY-MM-DD")
+            div.col-md-4
+              input(type="time", class="form-control", name="time", id="homework-deadline", placeholder="HH:MM")
         div.form-group
           button(class="btn btn-primary") 创建

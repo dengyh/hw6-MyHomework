@@ -6,6 +6,8 @@ is-authenticated = (req, res, next) -> if req.is-authenticated! then next! else 
 format-time = (time) -> time.getFullYear! + '-' + (1 + time.getMonth!) + '-' + time.getDate! +
   ' ' + time.getHours! + ':' + time.getMinutes! + ':' + time.getSeconds!
 
+fillZero = (num) -> if num < 10 then '0' + num else num
+
 module.exports = ->
   # The index page for this homework system
   router.get '/', is-authenticated, (req, res) !->
@@ -36,6 +38,9 @@ module.exports = ->
     if error then res.render 'error',
       message: 'Not Found Homework'
       status: 404
+    homework.deadlineTime = (fillZero homework.deadline.getHours!) + ':' + (fillZero homework.deadline.getMinutes!)
+    homework.deadlineDate = (fillZero homework.deadline.getFullYear!) + '-' + (fillZero homework.deadline.getMonth! + 1) + '-' + (fillZero homework.deadline.getDate!)
+
     res.render 'update',
       user: req.user
       homework: homework
@@ -54,7 +59,7 @@ module.exports = ->
     update-homework = {
       title: req.body.title
       content: req.body.content
-      deadline: new Date req.body.year, (req.body.month - 1), req.body.day, req.body.hour
+      deadline: new Date req.body.date + ' ' + req.body.time
       time: homework.time
       submissions: homework.submissions
     }
@@ -104,7 +109,7 @@ module.exports = ->
     new-homework = new Homework {
       title: req.body.title
       content: req.body.content
-      deadline: new Date req.body.year, (req.body.month - 1), req.body.day, req.body.hour
+      deadline: new Date req.body.date + ' ' + req.body.time
       time: new Date!
       submissions: []
     }
